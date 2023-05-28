@@ -1,5 +1,5 @@
 """
-添加一些自定义 or 后处理操作
+彩色图像的一些封装操作
 """
 from color import color, get_alphabet, get_background
 from PIL import Image
