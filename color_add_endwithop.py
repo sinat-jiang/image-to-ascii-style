@@ -30,7 +30,7 @@ def endwith_resize(input_image, output_image, **kwargs):
     pass
     
 
-def auto_convert(input_image, output_image, **kwargs):
+def auto_convert(input_image, output_image='test.jpg', **kwargs):
     """
     根据输入参数定制化生成结果
     :params input_image: 输入图片路径
@@ -43,7 +43,7 @@ def auto_convert(input_image, output_image, **kwargs):
     )
 
 
-def simple_color(
+def color_imageio(
     input: Image,
     rows: int = 100,
     alphabet='uppercase',
@@ -51,9 +51,14 @@ def simple_color(
     out_height: int = None,
     scale: float = None,
     fontsize: int = 17,
+    hw_ratio: float = 1.25,
+    char_width: float = 8.8,
+    char_height: float = 11,        # = width * 1.25
+    random_char: bool = True,
 ):
     """
-    简化函数，直接输入 Image 类型，返回 Image 类型
+    修改版：输入 Image 类型，返回 Image 类型
+    based on color() in color.py
     """
     origin = input
     width, height = origin.size
@@ -92,11 +97,18 @@ def simple_color(
     charlist = get_alphabet(alphabet)
     length = len(charlist)
 
+    if not random:
+        count = 0
+        
     for i in range(text_cols):
         for j in range(text_rows):
             x = round(char_width * i)
             y = round(char_height * j - 4)
-            char = charlist[random.randint(0, length - 1)]
+            if random_char:
+                char = charlist[random.randint(0, length - 1)]
+            else:
+                char = charlist[count]
+                count = (count + 1) % len(charlist)
             color = origin_ref.getpixel((i, j))
             draw.text((x, y), char, fill=color, font=font)
     # resize the reproduct if necessary

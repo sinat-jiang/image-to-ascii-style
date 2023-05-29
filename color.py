@@ -71,6 +71,10 @@ def color(
     out_height: int = None,
     scale: float = None,
     fontsize: int = 17,
+    hw_ratio: float = 1.25,
+    char_width: float = 8.8,
+    char_height: float = 11,        # = width * 1.25
+    random_char: bool = True,
 ):
     """output colorful text picture"""
     input_path = Path(input)
@@ -79,40 +83,27 @@ def color(
     width, height = origin.size
     print(f'input size: {origin.size}')
     # text amount of the output image
-    hw_ratio = 1.25
     text_rows = rows
     text_cols = round(width / (height / text_rows) * hw_ratio)  # char height-width ratio
     origin_ref_np = cv2.resize(
         np.array(origin), (text_cols, text_rows), interpolation=cv2.INTER_AREA
     )
     origin_ref = Image.fromarray(origin_ref_np)
-    # import matplotlib.pyplot as plt
-    # plt.figure()
-    # plt.imshow(origin_ref)
-    # plt.show()
     
     # font properties
     if 'zh' in alphabet:
         font = ImageFont.truetype('simhei.ttf', fontsize, encoding='utf-8')
     else:
         font = ImageFont.truetype('courbd.ttf', fontsize)
-    print('font:', font)
     # 调整 char 的宽高使得图片 size 尽量和原图一致
-    char_width = 8.8
-    char_height = 11        # = width * 1.25
-    # char_width = width / text_cols
-    # char_height = height / text_rows
-    # print(char_width, char_height)
+    # char_width = 8.8
+    # char_height = 11        # = width * 1.25
     # output size depend on the rows and cols
     canvas_height = round(text_rows * char_height)
     canvas_width = round(text_cols * char_width)
     
     # a canvas used to draw texts on it
     canvas = get_background(background, origin, canvas_width, canvas_height)
-    # import matplotlib.pyplot as plt
-    # plt.figure()
-    # plt.imshow(canvas)
-    # plt.show()
     # print(f'canvas size: {canvas.size}')
     
     # start drawing
@@ -122,12 +113,19 @@ def color(
     charlist = get_alphabet(alphabet)
     length = len(charlist)
 
-    for i in range(text_cols):
-        for j in range(text_rows):
-            x = round(char_width * i)
-            y = round(char_height * j - 4)
-            char = charlist[random.randint(0, length - 1)]
-            color = origin_ref.getpixel((i, j))
+    if not random_char:
+        count = 0
+        
+    for i in range(text_rows):
+        for j in range(text_cols):
+            x = round(char_width * j)
+            y = round(char_height * i)
+            if random_char:
+                char = charlist[random.randint(0, length - 1)]
+            else:
+                char = charlist[count]
+                count = (count + 1) % len(charlist)
+            color = origin_ref.getpixel((j, i))     # eg. (135, 82, 69)
             draw.text((x, y), char, fill=color, font=font)
     # resize the reproduct if necessary
     if out_height:  # height goes first
@@ -157,13 +155,25 @@ def color(
 if __name__ == '__main__':
 
     # instance test
-    input_image = 'test_imgs/p1.jpg'
+    input_image = 'test_imgs/head.png'
     output_image = input_image.split('.')[0] + '_color_output.jpg'
     
+    kwargs = {
+        'rows': 100,
+        'alphabet': 'uppercase',
+        # 'alphabet': 'sd_zh_我是大帅比~',
+        'background': 'origin7',
+        'out_height': None,
+        'fontsize': 17,     # 中文自定义需要手动调整字体大小已获得一个比较好的效果
+        'hw_ratio': 1.25,
+        'char_width': 8.8,
+        'char_height': 11,        # = width * 1.25
+        'random_char': False,
+    }
     color(
         input=input_image,
         output=output_image,
-        out_height=1066,    # 设置输出图片的横向分辨率（高度）
+        **kwargs
     )
 
     # manual generating
