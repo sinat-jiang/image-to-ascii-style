@@ -32,7 +32,7 @@ if uploaded_file is not None:
     
 else:
     col1, col2 = st.columns(2)
-    col1.image('example/p1.jpg', caption='Origin Image')
-    col2.image('example/p1_color_output.jpg', caption='The Ascii Style Image')
+    col1.image('example/head.png', caption='Origin Image')
+    col2.image('example/head_color_output.png', caption='The Ascii Style Image')
     
     

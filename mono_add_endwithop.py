@@ -3,7 +3,8 @@
 """
 from PIL import Image
 import cv2
-from mono import mono
+from pathlib import Path
+from mono import mono, CHARS
 
 
 def simple_mono(
@@ -30,6 +31,11 @@ def auto_convert(input_image, output_image, **kwargs):
         output=output_image,
         **kwargs
     )
+    
+
+
+
+    
     
 
 if __name__ == '__main__':

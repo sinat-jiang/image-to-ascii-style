@@ -152,7 +152,7 @@ if __name__ == '__main__':
     # auto_convert(input_image, output_image, **kwargs)
     
     # video test
-    video_path = r'D:\D1\AI_toys\CV\vision_transfor\AsciiStyleImageGan\videos\pkq.mp4'
+    video_path = r'D:\D1\AI_toys\CV\vision_transfor\AsciiStyleImageGan\videos\qz.mp4'
     video_output_path = video_path.split('.')[0] + '_ascii.mp4'
     video_color(video_path, video_output_path, ff=1)
     
