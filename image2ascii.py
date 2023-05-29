@@ -55,6 +55,12 @@ if image_type == 'monochrome':
         options=(False, True),
         horizontal=True,
     )
+    output_char_rows = st.sidebar.radio(
+        '6 - Rows of char in ascii image:',
+        options=(70, 100, 130, 160),
+        index=1,
+        horizontal=True,
+    )
 else:
     alphabet = st.sidebar.radio(
         '1 - char set:',
@@ -97,7 +103,8 @@ if uploaded_file is not None:
             'char_color': color2rgb[text_color],
             'out_height': Image.open(image).size[1] if output_height_consistence else None,
             'equalize': equalize,
-            'gaussblur': gaussblur
+            'gaussblur': gaussblur,
+            'num_lines': output_char_rows,
         }
         ascii_image = mono_imageio(Image.open(image), **kwargs)
     elif image_type == 'color':
