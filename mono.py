@@ -90,6 +90,24 @@ def get_background(choice: str, origin, width, height, glur=False) -> Image.Imag
                 ImageFilter.GaussianBlur(25)
             )
         return img
+    elif choice == 'red':
+        bg_nda = np.concatenate([
+            np.ones((height, width, 1)) * 255, np.zeros((height, width, 1)), np.zeros((height, width, 1))
+        ], axis=-1) 
+        img = Image.fromarray(np.uint8(bg_nda))
+        return img
+    elif choice == 'green':
+        bg_nda = np.concatenate([
+            np.zeros((height, width, 1)), np.ones((height, width, 1)) * 255, np.zeros((height, width, 1))
+        ], axis=-1) 
+        img = Image.fromarray(np.uint8(bg_nda))
+        return img
+    elif choice == 'blue':
+        bg_nda = np.concatenate([
+            np.zeros((height, width, 1)), np.zeros((height, width, 1)), np.ones((height, width, 1)) * 255
+        ], axis=-1) 
+        img = Image.fromarray(np.uint8(bg_nda))
+        return img
     elif choice == 'mean':
         mean = np.mean(np.array(origin)[:])
         return Image.fromarray(np.uint8(np.ones((height, width, 3)) * mean))

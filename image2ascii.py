@@ -24,17 +24,16 @@ image_type = st.sidebar.radio(
 )
 if image_type == 'monochrome':
     # params setting
-    background = st.sidebar.radio(
+    background = st.sidebar.selectbox(
         "1 - Backgroud color:",
-        options=('white', 'black'),
-        horizontal=True,
+        options=('white', 'black', 'red', 'green', 'blue')
     )
     color2rgb = {
         'black': (0, 0, 0), 
         'white': (255, 255, 255), 
         'red': (255, 0, 0), 
-        'blue': (0, 0, 255), 
         'green': (0, 255, 0),
+        'blue': (0, 0, 255), 
     }
     text_color = st.sidebar.selectbox(
         '2 - Text color:',
