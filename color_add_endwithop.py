@@ -55,6 +55,9 @@ def color_imageio(
     char_width: float = 8.8,
     char_height: float = 11,        # = width * 1.25
     random_char: bool = True,
+    char_width_gap_ratio: float = 1.0,
+    char_height_gap_ratio: float = 1.0,
+    zh_fonts: str='simhei.ttf',
 ):
     """
     修改版：输入 Image 类型，返回 Image 类型
@@ -75,20 +78,19 @@ def color_imageio(
     
     # font properties
     if 'zh' in alphabet:
-        font = ImageFont.truetype('simhei.ttf', fontsize, encoding='utf-8')
+        font = ImageFont.truetype(zh_fonts, fontsize, encoding='utf-8')
     else:
         font = ImageFont.truetype('courbd.ttf', fontsize)
     # 调整 char 的宽高使得图片 size 尽量和原图一致
-    char_width = 8.8
-    char_height = 11        # = width * 1.25
-    # char_width = width / text_cols
-    # char_height = height / text_rows
     # output size depend on the rows and cols
     canvas_height = round(text_rows * char_height)
     canvas_width = round(text_cols * char_width)
     
     # a canvas used to draw texts on it
-    canvas = get_background(background, origin, canvas_width, canvas_height)
+    if 'zh' in alphabet:    
+        canvas = get_background(background, origin, int(canvas_width * char_width_gap_ratio), int(canvas_height * char_height_gap_ratio))
+    else:
+        canvas = get_background(background, origin, canvas_width, canvas_height)
     
     # start drawing
     since = time.time()
@@ -97,20 +99,33 @@ def color_imageio(
     charlist = get_alphabet(alphabet)
     length = len(charlist)
 
-    if not random:
+    if not random_char:
         count = 0
         
-    for i in range(text_cols):
-        for j in range(text_rows):
-            x = round(char_width * i)
-            y = round(char_height * j - 4)
-            if random_char:
-                char = charlist[random.randint(0, length - 1)]
-            else:
-                char = charlist[count]
-                count = (count + 1) % len(charlist)
-            color = origin_ref.getpixel((i, j))
-            draw.text((x, y), char, fill=color, font=font)
+    if 'zh' in alphabet:
+        for i in range(text_rows):
+            for j in range(text_cols):
+                x = round(char_width * char_width_gap_ratio * j)
+                y = round(char_height * char_height_gap_ratio * i)
+                if random_char:
+                    char = charlist[random.randint(0, length - 1)]
+                else:
+                    char = charlist[count]
+                    count = (count + 1) % len(charlist)
+                color = origin_ref.getpixel((j, i))     # eg. (135, 82, 69)
+                draw.text((x, y), char, fill=color, font=font)
+    else:
+        for i in range(text_cols):
+            for j in range(text_rows):
+                x = round(char_width * i)
+                y = round(char_height * j - 4)
+                if random_char:
+                    char = charlist[random.randint(0, length - 1)]
+                else:
+                    char = charlist[count]
+                    count = (count + 1) % len(charlist)
+                color = origin_ref.getpixel((i, j))
+                draw.text((x, y), char, fill=color, font=font)
     # resize the reproduct if necessary
     if out_height:  # height goes first
         canvas_height = out_height

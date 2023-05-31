@@ -15,7 +15,7 @@ import sys
 """
 
 
-def get_alphabet(choice) -> str:
+def get_alphabet(choice):
     """get the alphabet used to print on the output image"""
     if choice == 'uppercase':
         return 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -40,7 +40,7 @@ def get_alphabet(choice) -> str:
         return choice.split('_')[-1]
 
 
-def get_background(choice: str, origin, width, height) -> Image.Image:
+def get_background(choice: str, origin, width, height):
     """generate a canvas to print"""
     if choice == 'transparent':
         # 4-channel
@@ -75,6 +75,8 @@ def color(
     char_width: float = 8.8,
     char_height: float = 11,        # = width * 1.25
     random_char: bool = True,
+    char_gap_ratio: float = 1.1,
+    zh_fonts: str='simhei.ttf',
 ):
     """output colorful text picture"""
     input_path = Path(input)
@@ -92,7 +94,8 @@ def color(
     
     # font properties
     if 'zh' in alphabet:
-        font = ImageFont.truetype('simhei.ttf', fontsize, encoding='utf-8')
+        # 中文可选字体类型（windows）：https://zhuanlan.zhihu.com/p/617230914
+        font = ImageFont.truetype(zh_fonts, fontsize, encoding='utf-8')
     else:
         font = ImageFont.truetype('courbd.ttf', fontsize)
     # 调整 char 的宽高使得图片 size 尽量和原图一致
@@ -116,17 +119,32 @@ def color(
     if not random_char:
         count = 0
         
-    for i in range(text_rows):
-        for j in range(text_cols):
-            x = round(char_width * j)
-            y = round(char_height * i)
-            if random_char:
-                char = charlist[random.randint(0, length - 1)]
-            else:
-                char = charlist[count]
-                count = (count + 1) % len(charlist)
-            color = origin_ref.getpixel((j, i))     # eg. (135, 82, 69)
-            draw.text((x, y), char, fill=color, font=font)
+    if 'zh' in alphabet:
+        # 中文字符调整输出顺序为从左至右，防止顺序展示时无法阅读
+        for i in range(text_rows):
+            for j in range(text_cols):
+                x = round(char_width * char_gap_ratio * j)
+                y = round(char_height * i)
+                if random_char:
+                    char = charlist[random.randint(0, length - 1)]
+                else:
+                    char = charlist[count]
+                    count = (count + 1) % len(charlist)
+                color = origin_ref.getpixel((j, i))     # eg. (135, 82, 69)
+                draw.text((x, y), char, fill=color, font=font)
+    else:
+        # 原始写法
+        for i in range(text_cols):
+            for j in range(text_rows):
+                x = round(char_width * i)
+                y = round(char_height * j - 4)
+                if random_char:
+                    char = charlist[random.randint(0, length - 1)]
+                else:
+                    char = charlist[count]
+                    count = (count + 1) % len(charlist)
+                color = origin_ref.getpixel((i, j))
+                draw.text((x, y), char, fill=color, font=font)
     # resize the reproduct if necessary
     if out_height:  # height goes first
         canvas_height = out_height
@@ -160,11 +178,11 @@ if __name__ == '__main__':
     
     kwargs = {
         'rows': 100,
-        'alphabet': 'uppercase',
-        # 'alphabet': 'sd_zh_我是大帅比~',
+        # 'alphabet': 'uppercase',
+        'alphabet': 'sd_zh_我是大帅比',
         'background': 'origin7',
         'out_height': None,
-        'fontsize': 17,     # 中文自定义需要手动调整字体大小已获得一个比较好的效果
+        'fontsize': 10,     # 中文自定义需要手动调整字体大小已获得一个比较好的效果
         'hw_ratio': 1.25,
         'char_width': 8.8,
         'char_height': 11,        # = width * 1.25

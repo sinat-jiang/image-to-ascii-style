@@ -24,6 +24,9 @@ def im2char(im, dsize):
 
 
 def im2char_re_2darray(im, dsize):
+    """
+    返回 char array，based on im2char()
+    """
     im = cv2.resize(im, dsize=dsize, interpolation=cv2.INTER_AREA)
     length = len(CHARS) - 1
     im = np.int32(np.round(im / 255 * length))
@@ -74,7 +77,13 @@ def mono(input: str, output: str = None, num_lines: int = 100, equalize: bool = 
         print('write success')
         
         
-def get_background(choice: str, origin, width, height, glur=False) -> Image.Image:
+def get_background(
+    choice: str, 
+    origin,         # 原始图片输入
+    width, 
+    height, 
+    glur: bool=False,
+):
     """generate a canvas to print"""
     if choice == 'transparent':
         # 4-channel
@@ -84,11 +93,6 @@ def get_background(choice: str, origin, width, height, glur=False) -> Image.Imag
         return Image.fromarray(np.uint8(np.zeros((height, width, 3))))
     elif choice == 'white':
         img = Image.fromarray(np.uint8(np.ones((height, width, 3)) * 255))
-        # 白色蒙版
-        if glur:
-            img.filter(
-                ImageFilter.GaussianBlur(25)
-            )
         return img
     elif choice == 'red':
         bg_nda = np.concatenate([
@@ -106,6 +110,13 @@ def get_background(choice: str, origin, width, height, glur=False) -> Image.Imag
         bg_nda = np.concatenate([
             np.zeros((height, width, 1)), np.zeros((height, width, 1)), np.ones((height, width, 1)) * 255
         ], axis=-1) 
+        img = Image.fromarray(np.uint8(bg_nda))
+        return img
+    elif choice.startswith('customize'):
+        color_rgb = [int(i) for i in choice.split('_')[-3:]]
+        bg_nda = np.concatenate([
+            np.ones((height, width, 1)) * color_rgb[0], np.ones((height, width, 1)) * color_rgb[1], np.ones((height, width, 1)) * color_rgb[2]
+        ], axis=-1)
         img = Image.fromarray(np.uint8(bg_nda))
         return img
     elif choice == 'mean':
@@ -236,10 +247,13 @@ if __name__ == '__main__':
     w, h = Image.open(image).convert('RGB').size
     output_image = image.split('.')[0] + '_mono_output.jpg'
     kwargs = {
+        'num_lines': 160,
         'equalize': True,
         'gaussblur': True,
         'fontsize': 17,             # 字体大小
-        'background': 'white',      # 背景版颜色
+        # 'background': 'white',      # 背景版颜色
+        # 'background': 'customize_255_255_0',      # 背景版颜色
+        'background': 'customize_17_238_238',
         'background_glur': False,    # 是否对背景板做模糊处理
         'char_color': (0, 0, 0),    # 字体颜色
         'out_height': None,         # 输出图片高度

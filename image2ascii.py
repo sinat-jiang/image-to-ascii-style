@@ -61,11 +61,31 @@ if image_type == 'monochrome':
         horizontal=True,
     )
 else:
+    # color image
     alphabet = st.sidebar.radio(
         '1 - char set:',
-        options=('uppercase',),
+        options=('uppercase', 'customize'),
         horizontal=True,
     )
+    if alphabet == 'customize':
+        alphabet_cs = 'sd_zh_' + st.sidebar.text_input('customize char set:', '我敲你蛙')
+        fontsize = st.sidebar.slider(
+            label='font size:',
+            min_value=5,
+            max_value=25,
+            value=10
+        )
+        char_width_gap_ratio = st.sidebar.number_input('char width gap ratio:', value=1.0)
+        char_height_gap_ratio = st.sidebar.number_input('char height gap ratio:', value=1.0)
+        char_width = st.sidebar.number_input('width of char:', value=8.8)
+        char_height = st.sidebar.number_input('height of char:', value=11.0)
+        
+        # 中文字体
+        zh_fonts = st.sidebar.selectbox(
+            'chinese fonts:',
+            options=('simhei.ttf', 'Deng.ttf', 'Dengb.ttf', 'msyh.ttc', 'msyhbd.ttc', 'msyhl.ttc', 'simkai.ttf', 'simsun.ttc')
+        )
+        
     background_type = st.sidebar.radio(
         '2 - background type:',
         options=('origin', 'white', 'black'),
@@ -108,10 +128,17 @@ if uploaded_file is not None:
         ascii_image = mono_imageio(Image.open(image), **kwargs)
     elif image_type == 'color':
         kwargs = {
-            'alphabet': alphabet,
+            'alphabet': alphabet_cs if alphabet == 'customize' else alphabet,
+            'random_char': False if alphabet == 'customize' else True,
+            'fontsize': fontsize if alphabet == 'customize' else 17,
+            'char_width_gap_ratio': char_width_gap_ratio if alphabet == 'customize' else None,
+            'char_height_gap_ratio': char_height_gap_ratio if alphabet == 'customize' else None,
+            'char_width': char_width if alphabet == 'customize' else 8.8,
+            'char_height': char_height if alphabet == 'customize' else 11,
             'background': background_type+str(background_trans_level) if 'origin' in background_type else background_type,
             'out_height': Image.open(image).size[1] if output_height_consistence else None,
             'rows': output_char_rows,
+            'zh_fonts': zh_fonts if alphabet == 'customize' else None,
         }
         ascii_image = color_imageio(Image.open(image), **kwargs)
     
