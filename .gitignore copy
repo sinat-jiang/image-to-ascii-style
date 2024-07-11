@@ -177,6 +177,8 @@ local_config.py
 
 # self customize dirs or file
 example/
-test_imgs/
-
+test_images/
+tmp/
+.git/
+.gitignore
 
