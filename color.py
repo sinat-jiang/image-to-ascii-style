@@ -41,7 +41,9 @@ def get_alphabet(choice):
 
 
 def get_background(choice: str, origin, width, height):
-    """generate a canvas to print"""
+    """
+    generate a canvas to print
+    """
     if choice == 'transparent':
         # 4-channel
         return Image.fromarray(np.uint8(np.zeros((height, width, 4))))
@@ -75,15 +77,19 @@ def color(
     char_width: float = 8.8,
     char_height: float = 11,        # = width * 1.25
     random_char: bool = True,
-    char_gap_ratio: float = 1.1,
+    char_width_gap_ratio: float = 1.0,
+    char_height_gap_ratio: float = 1.0,
     zh_fonts: str='simhei.ttf',
 ):
-    """output colorful text picture"""
+    """
+    output colorful text picture
+    """
     input_path = Path(input)
     # the original image
     origin = Image.open(input_path)
     width, height = origin.size
     print(f'input size: {origin.size}')
+
     # text amount of the output image
     text_rows = rows
     text_cols = round(width / (height / text_rows) * hw_ratio)  # char height-width ratio
@@ -98,6 +104,7 @@ def color(
         font = ImageFont.truetype(zh_fonts, fontsize, encoding='utf-8')
     else:
         font = ImageFont.truetype('courbd.ttf', fontsize)
+
     # 调整 char 的宽高使得图片 size 尽量和原图一致
     # char_width = 8.8
     # char_height = 11        # = width * 1.25
@@ -106,8 +113,11 @@ def color(
     canvas_width = round(text_cols * char_width)
     
     # a canvas used to draw texts on it
-    canvas = get_background(background, origin, canvas_width, canvas_height)
-    # print(f'canvas size: {canvas.size}')
+    if 'zh' in alphabet:    
+        canvas = get_background(background, origin, int(canvas_width * char_width_gap_ratio), int(canvas_height * char_height_gap_ratio))
+    else:
+        canvas = get_background(background, origin, canvas_width, canvas_height)
+    
     
     # start drawing
     since = time.time()
@@ -123,8 +133,8 @@ def color(
         # 中文字符调整输出顺序为从左至右，防止顺序展示时无法阅读
         for i in range(text_rows):
             for j in range(text_cols):
-                x = round(char_width * char_gap_ratio * j)
-                y = round(char_height * i)
+                x = round(char_width * char_width_gap_ratio * j)
+                y = round(char_height * char_height_gap_ratio * i)
                 if random_char:
                     char = charlist[random.randint(0, length - 1)]
                 else:
@@ -137,7 +147,7 @@ def color(
         for i in range(text_cols):
             for j in range(text_rows):
                 x = round(char_width * i)
-                y = round(char_height * j - 4)
+                y = round(char_height * j - 4)      # 减掉图像上面因为文字高度产生的白边
                 if random_char:
                     char = charlist[random.randint(0, length - 1)]
                 else:
@@ -145,6 +155,7 @@ def color(
                     count = (count + 1) % len(charlist)
                 color = origin_ref.getpixel((i, j))
                 draw.text((x, y), char, fill=color, font=font)
+
     # resize the reproduct if necessary
     if out_height:  # height goes first
         canvas_height = out_height
@@ -175,35 +186,48 @@ if __name__ == '__main__':
     # instance test
     input_image = 'test_imgs/head.png'
     output_image = input_image.split('.')[0] + '_color_output.jpg'
+
+    # test for HD images
+    input_image = 'test_imgs/kuaishou/simple_images/wukong.jpg'
+    # input_image = 'test_imgs/kuaishou/standard_images/p65.jpg'
+    output_image = f"{input_image.split('.')[0]}_color_output.{input_image.split('.')[-1]}"
     
+    # 英文字符通用参数参考
+    # kwargs = {
+    #     'rows': 100,
+    #     # 'alphabet': 'uppercase',          # 字符填充类型
+    #     'alphabet': 'random',          # 字符
+    #     'background': 'origin7',            # 背景色
+    #     'out_height': None,
+    #     'fontsize': 17,                     # 中文自定义需要手动调整字体大小已获得一个比较好的效果
+    #     'hw_ratio': 1.25,
+    #     'char_width': 8.8,
+    #     'char_height': 12,                  # = width * 1.25
+    #     'random_char': True,               # 是否将字符集随机分布在整张图片上
+    #     # 'char_width_gap_ratio': 1.1,        # 中文字符间隔需要手动调整，防止拥挤
+    #     # 'char_height_gap_ratio': 1.1,
+    # }
+
+    # 中文字符参数参考
     kwargs = {
         'rows': 100,
-        # 'alphabet': 'uppercase',
-        'alphabet': 'sd_zh_我是大帅比',
-        'background': 'origin7',
+        'alphabet': 'sd_zh_我是大帅比〇',    # 字符填充类型
+        # 'alphabet': 'number_zh_comp',
+        'background': 'origin8',            # 背景色，数字表示不透明度，可以用来控制图片亮度
         'out_height': None,
-        'fontsize': 10,     # 中文自定义需要手动调整字体大小已获得一个比较好的效果
+        'fontsize': 17,                     # 中文自定义需要手动调整字体大小已获得一个比较好的效果
         'hw_ratio': 1.25,
         'char_width': 8.8,
-        'char_height': 11,        # = width * 1.25
-        'random_char': False,
+        'char_height': 11,                  # = width * 1.25
+        'random_char': False,               # 是否将字符集随机分布在整张图片上
+        'char_width_gap_ratio': 1.75,        # 中文字符间隔需要手动调整，防止拥挤
+        'char_height_gap_ratio': 1.75,
     }
+
     color(
         input=input_image,
         output=output_image,
         **kwargs
     )
 
-    # manual generating
-    # for i in tqdm(range(1, 208), file=sys.stdout):
-    #     input_img = r'D:\D1\AI_toys\CV\vision_transfor\datasets\AsciiStyleImageGenerator\dataset\person\true\p{}.jpg'.format(i)
-    #     output_img = r'D:\D1\AI_toys\CV\vision_transfor\datasets\AsciiStyleImageGenerator\dataset\person\ascii_i2t_true_r150_v2\p{}_color_ascii.jpg'.format(i)
-    #     # input_img = r'D:\D1\AI_toys\CV\vision_transfor\datasets\AsciiStyleImageGenerator\dataset\person\cartoon\p{}_c.jpg'.format(i)
-    #     # output_img = r'D:\D1\AI_toys\CV\vision_transfor\datasets\AsciiStyleImageGenerator\dataset\person\ascii_i2t_cartoon_r150_v2\p{}_c_color_ascii.jpg'.format(i)
-    #     color(
-    #         input=input_img,
-    #         output=output_img,
-    #         # out_height=3600,  # 设置输出图片的横向分辨率（高度）
-    #         rows=150,
-    #     )
 
