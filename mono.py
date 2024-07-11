@@ -1,3 +1,6 @@
+"""
+黑白图像 ascii 风格转换
+"""
 import numpy as np
 import cv2
 from pathlib import Path
@@ -6,6 +9,8 @@ from PIL import Image, ImageFont, ImageDraw, ImageFilter
 
 
 CHARS = '@W#$OEXC[(/?=^~_.` '
+
+CHARS = '我爱你个大猪头@W#$OEXC[(/?=^~_.` '
 
 
 def im2char(im, dsize):
@@ -145,13 +150,16 @@ def mono_ret_image(
     out_height: int = None,
     scale: float = None,
     fontsize: int = 17,
+    fonttype: str = None,
     hw_ratio: float = 1.865,
     char_width: float = 8.8,
 ):
     """
     改写原始 mono 函数，使其返回 image 而不是 text file
-    :params hw_ratio: 字符高宽比
-    :params char_width: 画布中字符的宽（高则由 char_width * hw_ratio 得到）
+    
+    Params:
+        hw_ratio: 字符高宽比
+        char_width: 画布中字符的宽（高则由 char_width * hw_ratio 得到）
     """
     input_path = Path(input)
     origin = cv2.imread(str(input_path))
@@ -165,13 +173,25 @@ def mono_ret_image(
     
     # 直方图均衡化
     if equalize:
+        # 1 全局直方图均衡化 (Global Histogram Equalization)
         origin = cv2.equalizeHist(origin)
-        # plt.subplot(2, 3, 2)
-        # plt.imshow(origin, cmap='gray')
+        
+        # 2 CLAHE 直方图均衡化
+        # clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+        # origin = clahe.apply(origin)
+        
+        # # 3 基于YCrCb色彩空间的直方图均衡化
+        # # 转换到 YCrCb 色彩空间
+        # ycrcb = cv2.cvtColor(cv2.imread(str(input_path)), cv2.COLOR_BGR2YCrCb)
+        # # 对Y通道进行直方图均衡化
+        # ycrcb[:, :, 0] = cv2.equalizeHist(ycrcb[:, :, 0])
+        # # 转换回 BGR 色彩空间
+        # origin = cv2.cvtColor(ycrcb, cv2.COLOR_YCrCb2BGR)
+        # origin = cv2.cvtColor(origin, cv2.COLOR_RGB2GRAY)
         
     # 加高斯模糊
     if gaussblur:
-        origin = cv2.GaussianBlur(origin, ksize=(3,3), sigmaX=2, sigmaY=2)
+        origin = cv2.GaussianBlur(origin, ksize=(3, 3), sigmaX=2, sigmaY=2)
         # plt.subplot(2, 3, 3)
         # plt.imshow(origin, cmap='gray')
         
@@ -186,7 +206,11 @@ def mono_ret_image(
     
     text_rows, text_cols = output_height_rows, output_width_cols
     # 设置字体参数
-    font = ImageFont.truetype('courbd.ttf', fontsize)
+    if fonttype == 'zh':
+        # 中文字体
+        font = ImageFont.truetype('simhei.ttf', fontsize, encoding='utf-8')
+    else:
+        font = ImageFont.truetype('courbd.ttf', fontsize)
     char_height = char_width * hw_ratio
     canvas_height = round(text_rows * char_height)
     canvas_width = round(text_cols * char_width)
@@ -243,18 +267,21 @@ if __name__ == '__main__':
     # test for mono_ret_image
     # image = 'example/p1.jpg'
     # image = 'test_imgs/p182_c.jpg'
-    image = 'test_imgs/p0_c.jpg'
+    # image = 'test_imgs/p165_c.jpg'
+    image = 'test_imgs/p72_c.jpg'
+    # image = 'test_imgs/p0_c.jpg'
     w, h = Image.open(image).convert('RGB').size
     output_image = image.split('.')[0] + '_mono_output.jpg'
     kwargs = {
-        'num_lines': 160,
-        'equalize': True,
-        'gaussblur': True,
+        'num_lines': 160,           # 字符行数，行数越大，细节越清晰
+        'equalize': True,           # 直方图均衡化
+        'gaussblur': True,          # 高斯模糊
+        'background': 'white',      # 背景版颜色
+        # 'background': 'customize_255_255_0',      # 背景版颜色，自定义三个通道的颜色
+        # 'background': 'customize_17_238_238',
+        'background_glur': False,   # 是否对背景板做模糊处理
         'fontsize': 17,             # 字体大小
-        # 'background': 'white',      # 背景版颜色
-        # 'background': 'customize_255_255_0',      # 背景版颜色
-        'background': 'customize_17_238_238',
-        'background_glur': False,    # 是否对背景板做模糊处理
+        'fonttype': 'zh',             # 字体类型，区分中英文
         'char_color': (0, 0, 0),    # 字体颜色
         'out_height': None,         # 输出图片高度
         'char_width': 8.8,          # 字符宽度（和 fontsize 一起控制在底板上绘制字符的大小，char_width 越大，单个字符在底板上占据的空间就越大，此时若 fontsize 固定，则 width_size 越大，显示的字就越小）
