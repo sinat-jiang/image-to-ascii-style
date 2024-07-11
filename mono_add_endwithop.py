@@ -1,5 +1,5 @@
 """
-黑白图像的一些封装操作
+黑白图像的一些封装操作，for streamlit
 """
 from PIL import Image
 import cv2

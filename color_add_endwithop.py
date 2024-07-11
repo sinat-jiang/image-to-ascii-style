@@ -1,5 +1,5 @@
 """
-彩色图像的一些封装操作
+彩色图像的一些封装操作，for streamlit
 """
 from color import color, get_alphabet, get_background
 from PIL import Image
@@ -68,7 +68,6 @@ def color_imageio(
     # print(f'input size: {origin.size}')
     
     # text amount of the output image
-    hw_ratio = 1.25
     text_rows = rows
     text_cols = round(width / (height / text_rows) * hw_ratio)  # char height-width ratio
     origin_ref_np = cv2.resize(
@@ -81,6 +80,7 @@ def color_imageio(
         font = ImageFont.truetype(zh_fonts, fontsize, encoding='utf-8')
     else:
         font = ImageFont.truetype('courbd.ttf', fontsize)
+
     # 调整 char 的宽高使得图片 size 尽量和原图一致
     # output size depend on the rows and cols
     canvas_height = round(text_rows * char_height)
