@@ -188,32 +188,34 @@ if __name__ == '__main__':
     output_image = input_image.split('.')[0] + '_color_output.jpg'
 
     # test for HD images
-    input_image = 'test_imgs/kuaishou/simple_images/wukong.jpg'
-    # input_image = 'test_imgs/kuaishou/standard_images/p65.jpg'
-    output_image = f"{input_image.split('.')[0]}_color_output.{input_image.split('.')[-1]}"
+    # input_image = 'test_imgs/kuaishou/simple_images/22.jpg'
+    input_image = 'test_imgs/kuaishou/standard_images/2.jpg'
+    output_image = f"{input_image.split('.')[0]}_color_output-80.{input_image.split('.')[-1]}"
     
     # 英文字符通用参数参考
     # kwargs = {
     #     'rows': 100,
     #     # 'alphabet': 'uppercase',          # 字符填充类型
-    #     'alphabet': 'random',          # 字符
+    #     'alphabet': 'alphanumeric',               # 字符
     #     'background': 'origin7',            # 背景色
     #     'out_height': None,
     #     'fontsize': 17,                     # 中文自定义需要手动调整字体大小已获得一个比较好的效果
     #     'hw_ratio': 1.25,
     #     'char_width': 8.8,
-    #     'char_height': 12,                  # = width * 1.25
-    #     'random_char': True,               # 是否将字符集随机分布在整张图片上
-    #     # 'char_width_gap_ratio': 1.1,        # 中文字符间隔需要手动调整，防止拥挤
-    #     # 'char_height_gap_ratio': 1.1,
+    #     'char_height': 11,                  # = width * 1.25
+    #     'random_char': True,                # 是否将字符集随机分布在整张图片上
+    #     'char_width_gap_ratio': 1.1,        # 中文字符间隔需要手动调整，防止拥挤
+    #     'char_height_gap_ratio': 1.1,
     # }
 
     # 中文字符参数参考
     kwargs = {
-        'rows': 100,
-        'alphabet': 'sd_zh_我是大帅比〇',    # 字符填充类型
+        'rows': 80,
+        # 'alphabet': 'sd_zh_我是大帅比〇',    # 字符填充类型
         # 'alphabet': 'number_zh_comp',
-        'background': 'origin8',            # 背景色，数字表示不透明度，可以用来控制图片亮度
+        # 'alphabet': 'sd_zh_我踏马裂开~',         # 字符填充类型
+        'alphabet': 'sd_zh_真香', 
+        'background': 'origin7',            # 背景色，数字表示不透明度，可以用来控制图片亮度
         'out_height': None,
         'fontsize': 17,                     # 中文自定义需要手动调整字体大小已获得一个比较好的效果
         'hw_ratio': 1.25,

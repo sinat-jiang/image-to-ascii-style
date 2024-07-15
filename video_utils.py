@@ -1,4 +1,6 @@
-# 图像&文件预处理函数
+"""
+对视频文件进行 mono 和 color 的 ascii 码图像风格转换
+"""
 
 import os
 import cv2
@@ -34,6 +36,7 @@ def video_frames_extract(video_path, output_folder, ff=None):
     print('设置帧间隔：', frame_interval)
 
     # 逐帧提取并保存
+    pbar = tqdm(desc='抽取帧数：')
     count = 0
     while cap.isOpened():
         ret, frame = cap.read()
@@ -42,6 +45,7 @@ def video_frames_extract(video_path, output_folder, ff=None):
                 image_name = os.path.join(output_path, f"{video_name}_frame_{count}.jpg")
                 cv2.imwrite(image_name, frame)
             count += 1
+            pbar.update(1)
         else:
             break
     cap.release()
@@ -75,17 +79,24 @@ def frames_to_video(frames_path, video_path, fps=25):
     print('finish')
 
 
+def frames_to_ascii(frames_path, args, type='mono'):
+    """
+    依次将每张图片做 ascii 风格转换
+    
+    Params: 
+    - frames_path: 存放帧图像的路径 
+    - args: 风格转换的参数 
+    - type: 转换类型，黑白 or 彩色
+    """
+    pass
+
+
+
 if __name__ == '__main__':
     # 拆帧
-    # video_path = r'datasets\photo2ascii_self_size150_v2\self_test_videos\pkq.mp4'  # 视频文件路径
-    # output_folder = r'datasets\photo2ascii_self_size150_v2\self_test_videos\pkq_frames'  # 输出文件夹路径
-    # video_path = r'datasets\photo2ascii_self_size150_v2\self_test_videos\bs.mp4'
-    # output_folder = r'datasets\photo2ascii_self_size150_v2\self_test_videos\bs_frames'
-    # video_path = r'datasets\photo2ascii_self_size150_v2\self_test_videos\sl.mp4'
-    # output_folder = r'datasets\photo2ascii_self_size150_v2\self_test_videos\sl_frames'
-    # video_path = r'./bs.mp4'
-    # output_folder = r'./bs_frames'
-    # video_frames_extract(video_path, output_folder, ff=None)
+    video_path = f'./test_videos/bs.mp4'         # 视频文件路径
+    output_folder = os.path.join(os.path.dirname(video_path), f"{os.path.basename(video_path).split('.')[0]}_frames")   # 输出文件夹路径
+    video_frames_extract(video_path, output_folder, ff=None)
 
     # 组帧
     # v1
@@ -100,6 +111,6 @@ if __name__ == '__main__':
     # video_path = r'datasets\photo2ascii_self_size150_v2\self_test_videos\pkq_ascii.mp4v'
     # frames_path = r'datasets\photo2ascii_self_size150_v2\self_test_videos\sl_frames_ascii'
     # video_path = r'datasets\photo2ascii_self_size150_v2\self_test_videos\sl_ascii.mp4v'
-    frames_path = r'bs_frames'
-    video_path = r'bs_ascii.mp4'
-    frames_to_video(frames_path, video_path, fps=59)
+    # frames_path = r'bs_frames'
+    # video_path = r'bs_ascii.mp4'
+    # frames_to_video(frames_path, video_path, fps=59)
