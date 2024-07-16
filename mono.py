@@ -101,7 +101,7 @@ def get_background(
         # 原图加上透明度
         opacity = float(choice[-1]) / 10
         canvas = origin.resize((width, height), Image.BICUBIC).filter(
-            ImageFilter.GaussianBlur(25)
+            ImageFilter.GaussianBlur(15)
         )
         canvas = np.array(canvas)
         canvas = np.uint8(canvas[:, :, 0:3] * opacity)
@@ -175,6 +175,7 @@ def mono_ret_image(
     """
     input_path = Path(input)
     origin = cv2.imread(str(input_path))
+    origin_for_bg = Image.open(input_path)
     origin = cv2.cvtColor(origin, cv2.COLOR_RGB2GRAY)
     height, width, *_ = origin.shape
     print('image size:', height, width)
@@ -227,7 +228,7 @@ def mono_ret_image(
     
     # 2 构建画布
     # a canvas used to draw texts on it
-    canvas = get_background(background, origin, canvas_width, canvas_height, background_glur)
+    canvas = get_background(background, origin_for_bg, canvas_width, canvas_height, background_glur)
     
     draw = ImageDraw.Draw(canvas)
     for i in range(text_cols):
@@ -278,18 +279,19 @@ if __name__ == '__main__':
     # image = 'test_imgs/p0_c.jpg'
     
     # 简单图像
-    image = 'test_imgs/kuaishou/simple_images/5.jpg'
+    image = 'test_imgs/kuaishou/simple_images/3.jpg'
     # image = 'test_imgs/kuaishou/simple_images/p3_c.jpg'
     
     w, h = Image.open(image).convert('RGB').size
     output_image = f"{image.split('.')[0]}_mono_output.{image.split('.')[-1]}"
     
     kwargs = {
-        'num_lines': 120,           # 字符行数，行数越大，细节越清晰
+        'num_lines': 80,           # 字符行数，行数越大，细节越清晰
         # 'equalize': True,           # 直方图均衡化（对普通图像，即颜色分布较为均匀时，关闭直方图均衡化能获得较好的效果）
         'gaussblur': True,          # 高斯模糊
         'medianblur': False,        # 中值滤波
         'background': 'white',      # 背景版颜色
+        # 'background': 'origin9',      # 背景版颜色
         # 'background': 'customize_17_238_238',  # 背景版颜色，可自定义三个通道的颜色
         'background_glur': False,   # 是否对背景板做模糊处理
         'fontsize': 17,             # 字体大小
