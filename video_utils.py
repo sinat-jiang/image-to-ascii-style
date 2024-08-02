@@ -118,9 +118,9 @@ def frames_to_ascii(frames_path, new_frames_save_path, kwargs, type='mono', max_
 
 if __name__ == '__main__':
     # 拆帧
-    video_path = f'./test_videos/blmf.mp4'         # 视频文件路径
+    video_path = f'./test_videos/dm_dadou.mp4'         # 视频文件路径
     output_folder = os.path.join(os.path.dirname(video_path), f"{os.path.basename(video_path).split('.')[0]}_frames")   # 输出文件夹路径
-    # fps = video_frames_extract(video_path, output_folder, ff=None)
+    fps = video_frames_extract(video_path, output_folder, ff=None)
 
     # Ascii 风格转化
     type = 'color'
@@ -169,9 +169,9 @@ if __name__ == '__main__':
     #     'char_width_gap_ratio': 1.75,       # 中文字符间隔需要手动调整，防止拥挤
     #     'char_height_gap_ratio': 1.75,
     # }
-    frames_to_ascii(frames_path=output_folder, new_frames_save_path=new_frames_save_path, kwargs=kwargs, type=type, max_workers=10)
+    # frames_to_ascii(frames_path=output_folder, new_frames_save_path=new_frames_save_path, kwargs=kwargs, type=type, max_workers=10)
 
     # 组帧
-    fps = 30
+    fps = 20    # 30
     video_path = os.path.join(os.path.dirname(video_path), os.path.basename(video_path).replace('.', f'_2ascii_{type}.'))
-    frames_to_video(frames_path=new_frames_save_path, video_path=video_path, fps=fps)
+    # frames_to_video(frames_path=new_frames_save_path, video_path=video_path, fps=fps)
