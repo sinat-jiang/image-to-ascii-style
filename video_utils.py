@@ -118,9 +118,13 @@ def frames_to_ascii(frames_path, new_frames_save_path, kwargs, type='mono', max_
 
 if __name__ == '__main__':
     # 拆帧
+<<<<<<< HEAD
     video_path = f'./test_videos/regeng/regeng_ikun.mp4'         # 视频文件路径
+=======
+    video_path = f'./test_videos/dm_dadou.mp4'         # 视频文件路径
+>>>>>>> 0671091c5dbd6194f9645445e5ad7075ad650bd5
     output_folder = os.path.join(os.path.dirname(video_path), f"{os.path.basename(video_path).split('.')[0]}_frames")   # 输出文件夹路径
-    # fps = video_frames_extract(video_path, output_folder, ff=None)
+    fps = video_frames_extract(video_path, output_folder, ff=None)
 
     # Ascii 风格转化
     type = 'mono'      # mono or color
