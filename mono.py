@@ -178,7 +178,7 @@ def mono_ret_image(
     origin_for_bg = Image.open(input_path)
     origin = cv2.cvtColor(origin, cv2.COLOR_RGB2GRAY)
     height, width, *_ = origin.shape
-    print('image size:', height, width)
+    # print('image size:', height, width)
     
     # 直方图均衡化
     if equalize:
@@ -261,7 +261,7 @@ def mono_ret_image(
         )
     canvas.save(output_path)
     
-    print(f'Transformation completed. Saved as {output_path.name}.')
+    # print(f'Transformation completed. Saved as {output_path.name}.')
 
     
 
