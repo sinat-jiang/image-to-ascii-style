@@ -6,6 +6,7 @@ from pathlib import Path
 import time
 from tqdm import tqdm
 import sys
+from matplotlib import pyplot as plt
 
 
 """
@@ -37,6 +38,11 @@ def get_alphabet(choice):
     elif choice == 'number_zh_comp':
         return '壹贰叁肆伍陆柒捌玖拾'
     elif choice.startswith('sd_zh'):
+        return choice.split('_')[-1]
+    # 英文自定义
+    elif choice == 'alphanumeric_en':
+        return get_alphabet('alphabet') + get_alphabet('number')
+    elif choice.startswith('sd_en'):
         return choice.split('_')[-1]
 
 
@@ -92,7 +98,7 @@ def color(
 
     # text amount of the output image
     text_rows = rows
-    text_cols = round(width / (height / text_rows) * hw_ratio)  # char height-width ratio
+    text_cols = round(width / (height / text_rows) * hw_ratio)      # char height-width ratio
     origin_ref_np = cv2.resize(
         np.array(origin), (text_cols, text_rows), interpolation=cv2.INTER_AREA
     )
@@ -113,11 +119,10 @@ def color(
     canvas_width = round(text_cols * char_width)
     
     # a canvas used to draw texts on it
-    if 'zh' in alphabet:    
+    if 'zh' in alphabet or 'en' in alphabet:    
         canvas = get_background(background, origin, int(canvas_width * char_width_gap_ratio), int(canvas_height * char_height_gap_ratio))
     else:
         canvas = get_background(background, origin, canvas_width, canvas_height)
-    
     
     # start drawing
     since = time.time()
@@ -130,7 +135,7 @@ def color(
         count = 0
         
     if 'zh' in alphabet:
-        # 中文字符调整输出顺序为从左至右，防止顺序展示时无法阅读
+        # 中文，调整输出顺序为从左至右，防止顺序展示时无法阅读
         for i in range(text_rows):
             for j in range(text_cols):
                 x = round(char_width * char_width_gap_ratio * j)
@@ -142,8 +147,21 @@ def color(
                     count = (count + 1) % len(charlist)
                 color = origin_ref.getpixel((j, i))     # eg. (135, 82, 69)
                 draw.text((x, y), char, fill=color, font=font)
+    elif 'en' in alphabet:
+        # 增加英文自定义功能
+        for i in range(text_rows):
+            for j in range(text_cols):
+                x = round(char_width * char_width_gap_ratio * j)
+                y = round(char_height * char_height_gap_ratio * i)
+                if random_char:
+                    char = charlist[random.randint(0, length - 1)]
+                else:
+                    char = charlist[count]
+                    count = (count + 1) % len(charlist)
+                color = origin_ref.getpixel((j, i))                 # eg. (135, 82, 69)
+                draw.text((x, y), char, fill=color, font=font)
     else:
-        # 原始写法
+        # 原始写法（ascii 码字符，包括英文字母）
         for i in range(text_cols):
             for j in range(text_rows):
                 x = round(char_width * i)
@@ -155,6 +173,10 @@ def color(
                     count = (count + 1) % len(charlist)
                 color = origin_ref.getpixel((i, j))
                 draw.text((x, y), char, fill=color, font=font)
+    
+    # plt.figure()
+    # plt.imshow(draw)
+    # plt.show()
 
     # resize the reproduct if necessary
     if out_height:  # height goes first
@@ -184,47 +206,48 @@ def color(
 if __name__ == '__main__':
 
     # instance test
-    input_image = 'test_imgs/head.png'
-    output_image = input_image.split('.')[0] + '_color_output.jpg'
+    # input_image = 'test_imgs/head.png'
+    # output_image = input_image.split('.')[0] + '_color_output.jpg'
 
     # test for HD images
-    # input_image = 'test_imgs/kuaishou/simple_images/22.jpg'
-    input_image = 'test_imgs/kuaishou/standard_images/2.jpg'
-    output_image = f"{input_image.split('.')[0]}_color_output-80.{input_image.split('.')[-1]}"
+    input_image = 'test_imgs/kuaishou/simple_images/p23_c.jpg'
+    # input_image = 'test_imgs/kuaishou/standard_images/7.jpg'
+    output_image = f"{input_image.split('.')[0]}_color_output-200.{input_image.split('.')[-1]}"
     
     # 英文字符通用参数参考
-    # kwargs = {
-    #     'rows': 100,
-    #     # 'alphabet': 'uppercase',          # 字符填充类型
-    #     'alphabet': 'alphanumeric',               # 字符
-    #     'background': 'origin7',            # 背景色
-    #     'out_height': None,
-    #     'fontsize': 17,                     # 中文自定义需要手动调整字体大小已获得一个比较好的效果
-    #     'hw_ratio': 1.25,
-    #     'char_width': 8.8,
-    #     'char_height': 11,                  # = width * 1.25
-    #     'random_char': True,                # 是否将字符集随机分布在整张图片上
-    #     'char_width_gap_ratio': 1.1,        # 中文字符间隔需要手动调整，防止拥挤
-    #     'char_height_gap_ratio': 1.1,
-    # }
-
-    # 中文字符参数参考
     kwargs = {
-        'rows': 80,
-        # 'alphabet': 'sd_zh_我是大帅比〇',    # 字符填充类型
-        # 'alphabet': 'number_zh_comp',
-        # 'alphabet': 'sd_zh_我踏马裂开~',         # 字符填充类型
-        'alphabet': 'sd_zh_真香', 
-        'background': 'origin7',            # 背景色，数字表示不透明度，可以用来控制图片亮度
+        'rows': 200,
+        # 'alphabet': 'uppercase',          # 字符填充类型
+        'alphabet': 'alphanumeric',         # also you can use alphanumeric_en inorder to use the char_width_gap_ratio param to adjust the gap between chars
+        # 'alphabet': 'sd_en_ I love you ',         # also you can use alphanumeric_en inorder to use the char_width_gap_ratio param to adjust the gap between chars
+        'background': 'origin7',            # 背景色
         'out_height': None,
         'fontsize': 17,                     # 中文自定义需要手动调整字体大小已获得一个比较好的效果
         'hw_ratio': 1.25,
         'char_width': 8.8,
         'char_height': 11,                  # = width * 1.25
-        'random_char': False,               # 是否将字符集随机分布在整张图片上
-        'char_width_gap_ratio': 1.75,        # 中文字符间隔需要手动调整，防止拥挤
-        'char_height_gap_ratio': 1.75,
+        'random_char': True,                # 是否将字符集随机分布在整张图片上
+        'char_width_gap_ratio': 1.1,        # 字符间隔调整，防止拥挤
+        'char_height_gap_ratio': 1.1,
     }
+
+    # 中文字符参数参考
+    # kwargs = {
+    #     'rows': 80,
+    #     # 'alphabet': 'sd_zh_我是大帅比〇',    # 字符填充类型
+    #     # 'alphabet': 'number_zh_comp',
+    #     # 'alphabet': 'sd_zh_我踏马裂开~',         # 字符填充类型
+    #     'alphabet': 'sd_zh_真香', 
+    #     'background': 'origin7',            # 背景色，数字表示不透明度，可以用来控制图片亮度
+    #     'out_height': None,
+    #     'fontsize': 17,                     # 中文自定义需要手动调整字体大小已获得一个比较好的效果
+    #     'hw_ratio': 1.25,
+    #     'char_width': 8.8,
+    #     'char_height': 11,                  # = width * 1.25
+    #     'random_char': False,               # 是否将字符集随机分布在整张图片上
+    #     'char_width_gap_ratio': 1.75,        # 中文字符间隔需要手动调整，防止拥挤
+    #     'char_height_gap_ratio': 1.75,
+    # }
 
     color(
         input=input_image,
