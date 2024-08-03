@@ -32,11 +32,12 @@ def get_alphabet(choice):
         return r'~!@#$%^&*()-_=+[]{}\|;:,<.>/?"'
     elif choice == 'random':
         return get_alphabet('alphanumeric') + get_alphabet('symbol')
-    # 添加中文字体
+    # 中文字符
     elif choice == 'number_zh_simple':
         return '一二三四五六七八九十'
     elif choice == 'number_zh_comp':
         return '壹贰叁肆伍陆柒捌玖拾'
+    # 中文自定义
     elif choice.startswith('sd_zh'):
         return choice.split('_')[-1]
     # 英文自定义
