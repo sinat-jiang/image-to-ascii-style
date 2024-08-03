@@ -8,15 +8,15 @@ import matplotlib.pyplot as plt
 from PIL import Image, ImageFont, ImageDraw, ImageFilter
 
 
-CHARS = '@W#$OEXC[(/?=^~_.` '
+# CHARS = '@W#$OEXC[(/?=^~_.` '
 
 # CHARS = '@W#$OEXC[]()/?=^~_.` '
 
-# CHARS = '@W#$OEXC=~_.` '
+CHARS = '@W#$OEXC=~_.` '            # recommend
 
 # CHARS = "$,@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~\<\>i!lI;:,\^`'. "
 
-CHARS = '@%#*+=-:. '
+# CHARS = '@%#*+=-:. '              # recommend
 
 # CHARS = '我爱你个大猪头@W#$OEXC[(/?=^~_.` '
 
