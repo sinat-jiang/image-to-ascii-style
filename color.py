@@ -95,7 +95,7 @@ def color(
     # the original image
     origin = Image.open(input_path)
     width, height = origin.size
-    print(f'input size: {origin.size}')
+    # print(f'input size: {origin.size}')
 
     # text amount of the output image
     text_rows = rows
@@ -128,7 +128,7 @@ def color(
     
     # start drawing
     since = time.time()
-    print(f'Start transforming {input_path.name}')
+    # print(f'Start transforming {input_path.name}')
     draw = ImageDraw.Draw(canvas)
     charlist = get_alphabet(alphabet)
     length = len(charlist)
@@ -171,10 +171,10 @@ def color(
         )
     canvas.save(output_path)
 
-    print(f'Transformation completed. Saved as {output_path.name}.')
-    print(f'Output image size: {canvas_width}x{canvas_height}')
-    print(f'Text density: {text_cols}x{text_rows}')
-    print(f'Elapsed time: {time.time() - since:.4} second(s)')
+    # print(f'Transformation completed. Saved as {output_path.name}.')
+    # print(f'Output image size: {canvas_width}x{canvas_height}')
+    # print(f'Text density: {text_cols}x{text_rows}')
+    # print(f'Elapsed time: {time.time() - since:.4} second(s)')
 
 
 if __name__ == '__main__':
@@ -185,8 +185,9 @@ if __name__ == '__main__':
 
     # test for HD images
     # input_image = 'test_imgs/kuaishou/simple_images/p23_c.jpg'
-    input_image = 'test_imgs/kuaishou/standard_images/1.jpg'
-    output_image = f"{input_image.split('.')[0]}_color_output-200.{input_image.split('.')[-1]}"
+    # input_image = 'test_imgs/kuaishou/standard_images/1.jpg'
+    input_image = 'test_imgs/cangwentu/zhongyini.jpg'
+    output_image = f"{input_image.split('.')[0]}_color_output.{input_image.split('.')[-1]}"
     
     # 英文字符通用参数参考
     # kwargs = {
@@ -208,11 +209,11 @@ if __name__ == '__main__':
     # 中文字符参数参考
     kwargs = {
         'rows': 100,
-        'alphabet': 'sd_zh_我是大帅比〇',    # 字符填充类型
+        'alphabet': 'sd_zh_中意你〇',    # 字符填充类型
         # 'alphabet': 'number_zh_comp',
         # 'alphabet': 'sd_zh_我踏马裂开~',         # 字符填充类型
         # 'alphabet': 'sd_zh_真香', 
-        'background': 'origin7',            # 背景色，数字表示不透明度，可以用来控制图片亮度
+        'background': 'origin7',            # 背景色，默认为 origin7，数字表示不透明度，可以用来控制图片亮度
         'out_height': None,
         'fontsize': 17,                     # 中文自定义需要手动调整字体大小已获得一个比较好的效果
         'hw_ratio': 1.25,

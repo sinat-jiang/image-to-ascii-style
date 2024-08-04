@@ -124,40 +124,41 @@ def frames_to_ascii(frames_path, new_frames_save_path, kwargs, type='mono', max_
 if __name__ == '__main__':
     # 拆帧
     # video_path = f'./test_videos/regeng/regeng_ikun.mp4'         # 视频文件路径
-    video_path = f'./test_videos/dance/dance3.mp4'         # 视频文件路径
+    # video_path = f'./test_videos/dance/dance4.mp4'         # 视频文件路径
+    video_path = f'./test_videos/sence/ocean_sunset.mp4'         # 视频文件路径
     output_folder = os.path.join(os.path.dirname(video_path), f"{os.path.basename(video_path).split('.')[0]}_frames")   # 输出文件夹路径
-    fps = video_frames_extract(video_path, output_folder, ff=None)
+    # fps = video_frames_extract(video_path, output_folder, ff=None)
 
     # Ascii 风格转化
-    type = 'mono'      # mono or color
+    type = 'color'      # mono or color
     new_frames_save_path = os.path.join(os.path.dirname(output_folder), f"{os.path.basename(video_path).split('.')[0]}_{type}_ascii_frames")
     # params for mono
-    kwargs = {
-        'num_lines': 90,           # 字符行数，行数越大，细节越清晰
-        # 'equalize': True,         # 直方图均衡化（对普通图像，即颜色分布较为均匀时，关闭直方图均衡化能获得较好的效果）
-        'gaussblur': True,          # 高斯模糊
-        'medianblur': False,        # 中值滤波
-        'background': 'white',      # 背景版颜色，也可以自定义，格式：'customize_17_238_238'
-        'background_glur': False,   # 是否对背景板做模糊处理
-        'fontsize': 17,             # 字体大小
-        'char_color': (0, 0, 0),    # 字体颜色，可定制，例如：(100,149,237)
-        'out_height': None,         # 输出图片高度
-        'char_width': 8.8,          # 字符宽度（和 fontsize 一起控制在底板上绘制字符的大小，char_width 越大，单个字符在底板上占据的空间就越大，此时若 fontsize 固定，则 width_size 越大，显示的字就越小）
-    }
-    # params for color-en
     # kwargs = {
-    #     'rows': 60,
-    #     'alphabet': 'alphanumeric_en',               # 字符填充：大小写字母 + 数字
-    #     'background': 'origin7',            # 背景色
-    #     'out_height': None,
-    #     'fontsize': 17,                     # 中文自定义需要手动调整字体大小已获得一个比较好的效果
-    #     'hw_ratio': 1.25,
-    #     'char_width': 8.8,
-    #     'char_height': 11,                  # = width * 1.25
-    #     'random_char': True,                # 是否将字符集随机分布在整张图片上
-    #     'char_width_gap_ratio': 1.1,        # 中文字符间隔需要手动调整，防止拥挤
-    #     'char_height_gap_ratio': 1.1,
+    #     'num_lines': 90,           # 字符行数，行数越大，细节越清晰
+    #     # 'equalize': True,         # 直方图均衡化（对普通图像，即颜色分布较为均匀时，关闭直方图均衡化能获得较好的效果）
+    #     'gaussblur': True,          # 高斯模糊
+    #     'medianblur': False,        # 中值滤波
+    #     'background': 'white',      # 背景版颜色，也可以自定义，格式：'customize_17_238_238'
+    #     'background_glur': False,   # 是否对背景板做模糊处理
+    #     'fontsize': 17,             # 字体大小
+    #     'char_color': (0, 0, 0),    # 字体颜色，可定制，例如：(100,149,237)
+    #     'out_height': None,         # 输出图片高度
+    #     'char_width': 8.8,          # 字符宽度（和 fontsize 一起控制在底板上绘制字符的大小，char_width 越大，单个字符在底板上占据的空间就越大，此时若 fontsize 固定，则 width_size 越大，显示的字就越小）
     # }
+    # params for color-en
+    kwargs = {
+        'rows': 90,
+        'alphabet': 'alphanumeric_en',               # 字符填充：大小写字母 + 数字
+        'background': 'origin7',            # 背景色
+        'out_height': None,
+        'fontsize': 17,                     # 中文自定义需要手动调整字体大小已获得一个比较好的效果
+        'hw_ratio': 1.25,
+        'char_width': 8.8,
+        'char_height': 11,                  # = width * 1.25
+        'random_char': True,                # 是否将字符集随机分布在整张图片上
+        'char_width_gap_ratio': 1.1,        # 中文字符间隔需要手动调整，防止拥挤
+        'char_height_gap_ratio': 1.1,
+    }
     # params for color-zh
     # kwargs = {
     #     'rows': 80,
@@ -175,7 +176,7 @@ if __name__ == '__main__':
     #     'char_width_gap_ratio': 1.75,       # 中文字符间隔需要手动调整，防止拥挤
     #     'char_height_gap_ratio': 1.75,
     # }
-    frames_to_ascii(frames_path=output_folder, new_frames_save_path=new_frames_save_path, kwargs=kwargs, type=type, max_workers=5)
+    # frames_to_ascii(frames_path=output_folder, new_frames_save_path=new_frames_save_path, kwargs=kwargs, type=type, max_workers=5)
 
     # 组帧
     fps = 30

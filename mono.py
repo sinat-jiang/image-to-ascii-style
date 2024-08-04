@@ -16,7 +16,7 @@ CHARS = '@W#$OEXC=~_.` '            # recommend
 
 # CHARS = "$,@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~\<\>i!lI;:,\^`'. "
 
-# CHARS = '@%#*+=-:. '              # recommend
+# CHARS = '@%#*+=-:. '              # recommend【复杂背景推荐用这个】
 
 # CHARS = '我爱你个大猪头@W#$OEXC[(/?=^~_.` '
 
