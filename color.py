@@ -47,7 +47,7 @@ def get_alphabet(choice):
         return choice.split('_')[-1]
 
 
-def get_background(choice: str, origin, width, height):
+def get_background(choice: str, origin, width, height, kernel=25):
     """
     generate a canvas to print
     """
@@ -64,7 +64,7 @@ def get_background(choice: str, origin, width, height):
     elif choice.startswith('origin'):
         opacity = float(choice[-1]) / 10
         canvas = origin.resize((width, height), Image.BICUBIC).filter(
-            ImageFilter.GaussianBlur(25)
+            ImageFilter.GaussianBlur(kernel)
         )
         canvas = np.array(canvas)
         canvas = np.uint8(canvas[:, :, 0:3] * opacity)
@@ -77,6 +77,7 @@ def color(
     rows: int = 100,
     alphabet='uppercase',
     background='origin7',
+    kernel=5,
     out_height: int = None,
     scale: float = None,
     fontsize: int = 17,
@@ -120,7 +121,7 @@ def color(
     canvas_width = round(text_cols * char_width)
     
     # a canvas used to draw texts on it
-    canvas = get_background(background, origin, int(canvas_width * char_width_gap_ratio), int(canvas_height * char_height_gap_ratio))
+    canvas = get_background(background, origin, int(canvas_width * char_width_gap_ratio), int(canvas_height * char_height_gap_ratio), kernel)
     # if 'zh' in alphabet or 'en' in alphabet:    
     #     canvas = get_background(background, origin, int(canvas_width * char_width_gap_ratio), int(canvas_height * char_height_gap_ratio))
     # else:
@@ -214,6 +215,7 @@ if __name__ == '__main__':
         # 'alphabet': 'sd_zh_我踏马裂开~',         # 字符填充类型
         # 'alphabet': 'sd_zh_真香', 
         'background': 'origin7',            # 背景色，默认为 origin7，数字表示不透明度，可以用来控制图片亮度
+        'kernel': 5,                        # 背景蒙版的高斯核大小，控制图片清晰度
         'out_height': None,
         'fontsize': 17,                     # 中文自定义需要手动调整字体大小已获得一个比较好的效果
         'hw_ratio': 1.25,
