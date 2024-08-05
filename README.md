@@ -7,6 +7,7 @@ Records:
 - [05.29] 单色模式功能更新：增加背景颜色自定义功能
 - [06.12] 彩色模式支持添加中文字符，并支持自定义文字
 - [07.31] 增加针对视频的字符化处理功能
+- [08.05] 字体选择
 
 Simple Start:
 
@@ -15,3 +16,11 @@ Simple Start:
 2. 彩色字符画：`python color.py`
 
 3. 视频处理，参考：`video_utils.py`
+
+EN Font recommend：
+
+1. comic.ttf, comicbd.ttf
+
+2. Inkfree.ttf
+
+3. segoesc.ttf
